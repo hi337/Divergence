@@ -4,27 +4,21 @@ from sklearn.metrics import accuracy_score
 from sklearn.preprocessing import MinMaxScaler
 import pandas as pd
 import numpy as np
+import joblib
 
-# Load the combined and shuffled data
-data_df = pd.read_csv('labeled_data.csv')
+# Load the labeled_data.csv file
+data_df = pd.read_csv('selected_data.csv')
+
+# Extract 'R' and 'Label' columns
+selected_columns = ['R', 'Label']
+selected_data = data_df[selected_columns]
+
+# Drop rows with NaN or infinite values in the 'R' column
+selected_data = selected_data.replace([np.inf, -np.inf], np.nan).dropna(subset=['R'])
 
 # Extract features and labels
-X = data_df.drop('Label', axis=1).values
-y = data_df['Label'].values
-
-# Check for NaN values
-nan_indices = np.isnan(X).any(axis=1)
-
-# Check for infinite values
-inf_indices = np.isinf(X).any(axis=1)
-
-# Print problematic indices
-print("NaN indices:", np.where(nan_indices)[0])
-print("Infinite indices:", np.where(inf_indices)[0])
-
-# Handle NaN and infinite values
-X[np.isnan(X)] = 0
-X[np.isinf(X)] = np.finfo(np.float64).max
+X = selected_data['R'].values.reshape(-1, 1)  # Reshape to ensure X is a 2D array
+y = selected_data['Label'].values
 
 # Check data types
 print("Data type of X before scaling:", X.dtype)
@@ -42,8 +36,8 @@ print("Data type of X after scaling:", X_scaled.dtype)
 # Split the data into training and testing sets
 X_train, X_test, y_train, y_test = train_test_split(X_scaled, y, test_size=0.2, random_state=42)
 
-# Initialize and train the SVM classifier
-svm_classifier = SVC(kernel='poly', degree=3, gamma='scale')  # You can adjust the kernel as needed
+# Initialize and train the SVM classifier with a polynomial kernel
+svm_classifier = SVC(kernel='poly', degree=3, gamma='scale')  # You can adjust the degree as needed
 svm_classifier.fit(X_train, y_train)
 
 # Make predictions on the test set
@@ -52,3 +46,6 @@ y_pred = svm_classifier.predict(X_test)
 # Evaluate the accuracy
 accuracy = accuracy_score(y_test, y_pred)
 print("Accuracy:", accuracy)
+
+# Save the trained SVM model
+joblib.dump(svm_classifier, 'svm_model_r_value.joblib')
