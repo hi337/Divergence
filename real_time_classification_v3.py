@@ -2,7 +2,6 @@ from pylsl import StreamInlet, resolve_stream
 import numpy as np
 import joblib
 import time
-import math
 
 # Function to calculate Power Spectral Density (PSD) from FFT result
 def calculate_psd(fft_result):
@@ -72,7 +71,7 @@ def conduct_learning_test(modality):
         average_value = np.mean(data_points)
         print(f"Average Attention Level for {modality} learning test:", average_value)
 
-        return math.ran
+        return average_value
 
     finally:
         # Stop streaming when done
