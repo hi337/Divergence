@@ -2,6 +2,7 @@ from pylsl import StreamInlet, resolve_stream
 import numpy as np
 import joblib
 import time
+import math
 
 # Function to calculate Power Spectral Density (PSD) from FFT result
 def calculate_psd(fft_result):
@@ -71,12 +72,31 @@ def conduct_learning_test(modality):
         average_value = np.mean(data_points)
         print(f"Average Attention Level for {modality} learning test:", average_value)
 
+        return math.ran
+
     finally:
         # Stop streaming when done
         inlet.close_stream()
 
 # Conduct separate tests for different learning modalities
-conduct_learning_test("Auditory")
-conduct_learning_test("Visual")
-conduct_learning_test("Reading")
-conduct_learning_test("Kinesthetic")
+reading = conduct_learning_test("Reading")
+visual = conduct_learning_test("Visual")
+auditory = conduct_learning_test("Auditory")
+kinesthetic = conduct_learning_test("Kinesthetic")
+
+order_arr = ["reading", "visual", "auditory", "kinesthetic"]
+strat_arr = [reading, visual, auditory, kinesthetic]
+
+best = max(strat_arr)
+name_of_best = order_arr[strat_arr.index(best)]
+
+print(f"You are a {name_of_best} learner, you were engaged {round((best*100), 2)}% of the time!")
+
+if strat_arr[0] < 0.4:
+    print("You should consult a medical professional to be tested for dyslexia or dysgraphia")
+if strat_arr[1] < 0.4:
+    print("You should consult a medical professional to be tested for visual processing disorder")
+if strat_arr[2] < 0.4:
+    print("You should consult a medical professional to be tested for central auditory processing disorder")
+if sum(strat_arr) < 0.4:
+    print("You should consult a medical professional to be tested for ADHD or Autism")
