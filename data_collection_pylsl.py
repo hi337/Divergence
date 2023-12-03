@@ -24,10 +24,10 @@ def process_eeg_data(eeg_data):
     }
     
     # Extract features based on waveband distribution
-    E_alpha = np.sum(psd[freq_bands['alpha'][0]:freq_bands['alpha'][1]])
-    E_beta = np.sum(psd[freq_bands['beta'][0]:freq_bands['beta'][1]])
-    E_theta = np.sum(psd[freq_bands['theta'][0]:freq_bands['theta'][1]])
-    E_delta = np.sum(psd[freq_bands['delta'][0]:freq_bands['delta'][1]])
+    E_alpha = psd[0]
+    E_beta = psd[1]
+    E_theta = psd[2]
+    E_delta = psd[3]
     
     # Calculate the ratio of alpha to beta activities
     R = E_alpha / E_beta
@@ -38,33 +38,27 @@ streams = pylsl.resolve_stream('type', 'EEG')
 # Connect to the Muse headset using pylsl
 inlet = pylsl.StreamInlet(streams[0])
 
-# # Collect EEG data for a certain duration (adjust as needed)
-# duration_in_seconds = 10
-# eeg_data = []
-# labels = []  # 1 for attentive, 0 for inattentive
+# Collect EEG data for a certain duration (adjust as needed)
+duration_in_seconds = 60
+eeg_data = []
+labels = []  # 1 for attentive, 0 for inattentive
 
-# start_time = time.time()
-# while (time.time() - start_time) < duration_in_seconds:
-#     sample, timestamp = inlet.pull_sample()
-#     eeg_data.append(sample[:4])  # Assuming AF7 electrode data
-#     labels.append(1)
-# # Process EEG data
-# X = []  # Features
-# for eeg_sample in eeg_data:
-#     features = process_eeg_data(eeg_sample)
-#     X.append(features)
-# X = np.array(X)
+start_time = time.time()
+while (time.time() - start_time) < duration_in_seconds:
+    sample, timestamp = inlet.pull_sample()
+    eeg_data.append(sample[:4])  # Assuming AF7 electrode data
+    labels.append(1)
+# Process EEG data
+X = []  # Features
+for eeg_sample in eeg_data:
+    features = process_eeg_data(eeg_sample)
+    X.append(features)
+X = np.array(X)
 
-# # Convert labels to numpy array
-# y = np.array(labels)
+# Convert labels to numpy array
+y = np.array(labels)
 
-# # Save data and labels to a CSV file
-# data_df = pd.DataFrame(X, columns=['E_alpha', 'E_beta', 'E_theta', 'E_delta', 'R'])
-# data_df['Label'] = y
-# data_df.to_csv('labeled_data_pylsl.csv', index=False)
-
-while True:    
-# get a new sample (you can also omit the timestamp part if you're 
-# not interested in it)    
-  sample, timestamp = inlet.pull_sample()    
-  print(timestamp, sample)
+# Save data and labels to a CSV file
+data_df = pd.DataFrame(X, columns=['E_alpha', 'E_beta', 'E_theta', 'E_delta', 'R'])
+data_df['Label'] = y
+data_df.to_csv('Jai_distracted3.csv', index=False)
