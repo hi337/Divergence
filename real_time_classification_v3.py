@@ -92,6 +92,15 @@ name_of_best = order_arr[strat_arr.index(best)]
 
 print(f"You are a {name_of_best} learner, you were engaged {round((best*100), 2)}% of the time!")
 
+if name_of_best == "reading":
+    print("To study optimally, you would benefit greatly from reading books and text material.")
+elif name_of_best == "visual":
+    print("To study optimally, you would benefit greatly from watching videos and presentations.")
+elif name_of_best == "auditory":
+    print("To study optimally, you would benefit greatly from listening to lectures and communicating with others.")
+else:
+    print("To study optimally, you would benefit greatly from using your hands and building projects.")
+
 if strat_arr[0] < 0.4:
     print("You should consult a medical professional to be tested for dyslexia or dysgraphia")
 if strat_arr[1] < 0.4:
